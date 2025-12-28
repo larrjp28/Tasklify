@@ -28,7 +28,8 @@
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   width: 100%;
   padding: 0.75rem;
   border: 3px solid var(--purple-dark);
@@ -39,7 +40,8 @@
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
   outline: none;
   border-color: var(--purple-light);
   box-shadow: 0 0 0 3px rgba(139, 123, 184, 0.2);
@@ -70,4 +72,98 @@
 .submit-btn:active {
   transform: translate(4px, 4px);
   box-shadow: 0 0 0 var(--purple-dark);
+}
+
+.form-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.cancel-btn {
+  flex: 1;
+  padding: 0.75rem;
+  background: white;
+  border: 3px solid var(--purple-dark);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--purple-dark);
+  transition: transform 0.1s, box-shadow 0.1s;
+  color: var(--purple-dark);
+}
+
+.cancel-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--purple-dark);
+}
+
+.cancel-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--purple-dark);
+}
+
+.add-subtask-btn {
+  padding: 0.75rem 1rem;
+  background: var(--purple-dark);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-subtask-btn:hover {
+  background: var(--purple-light);
+}
+
+.subtasks-list {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.subtask-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 2px solid var(--purple-dark);
+}
+
+.subtask-item input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+.subtask-item span {
+  flex: 1;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
+.remove-subtask-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.remove-subtask-btn:hover {
+  background: #dc2626;
 }

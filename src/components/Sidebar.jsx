@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import './Sidebar.css';
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -52,10 +54,17 @@ function Sidebar() {
           ))}
         </nav>
 
-        <button className="logout-btn" onClick={handleLogout}>
-          <span className="sidebar-icon">🚪</span>
-          <span className="sidebar-label">Logout</span>
-        </button>
+        <div className="sidebar-footer">
+          <button className="theme-toggle-btn" onClick={toggleTheme}>
+            <span className="sidebar-icon">{isDarkMode ? '☀️' : '🌙'}</span>
+            <span className="sidebar-label">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+          </button>
+
+          <button className="logout-btn" onClick={handleLogout}>
+            <span className="sidebar-icon">🚪</span>
+            <span className="sidebar-label">Logout</span>
+          </button>
+        </div>
       </aside>
     </>
   );

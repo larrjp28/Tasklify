@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 import './Navigation.css';
 
 function Navigation() {
   const [activeNav, setActiveNav] = useState('Dashboard');
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const navItems = [
     'Upcoming',
@@ -25,6 +27,9 @@ function Navigation() {
           {item}
         </button>
       ))}
+      <button className="theme-toggle" onClick={toggleTheme} title={isDarkMode ? 'Light Mode' : 'Dark Mode'}>
+        {isDarkMode ? '☀️' : '🌙'}
+      </button>
     </nav>
   );
 }
