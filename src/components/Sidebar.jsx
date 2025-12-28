@@ -1,13 +1,31 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useTask } from '../context/TaskContext';
 import './Sidebar.css';
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
+  const { tasks, getTasksByStatus, getUpcomingTasks } = useTask();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+
+  // Calculate counts
+  const totalTasks = tasks.filter(t => t.status !== 'finished' && t.status !== 'missed').length;
+  const upcomingCount = getUpcomingTasks().length;
+  const finishedCount = getTasksByStatus('finished').length;
+  const missedCount = getTasksByStatus('missed').length;
+
+  const getCounts = (path) => {
+    switch(path) {
+      case '/tasks': return totalTasks;
+      case '/upcoming': return upcomingCount;
+      case '/finished': return finishedCount;
+      case '/missed': return missedCount;
+      default: return null;
+    }
+  };
 
   const menuItems = [
     { path: '/dashboard', icon: '📊', label: 'Dashboard' },
@@ -41,17 +59,23 @@ function Sidebar() {
         </div>
 
         <nav className="sidebar-nav">
-          {menuItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-              onClick={() => setIsOpen(false)}
-            >
-              <span className="sidebar-icon">{item.icon}</span>
-              <span className="sidebar-label">{item.label}</span>
-            </NavLink>
-          ))}
+          {menuItems.map((item) => {
+            const count = getCounts(item.path);
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+                onClick={() => setIsOpen(false)}
+              >
+                <span className="sidebar-icon">{item.icon}</span>
+                <span className="sidebar-label">{item.label}</span>
+                {count !== null && count > 0 && (
+                  <span className="sidebar-badge">{count}</span>
+                )}
+              </NavLink>
+            );
+          })}
         </nav>
 
         <div className="sidebar-footer">

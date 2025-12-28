@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import './SearchBar.css';
 
-function SearchBar({ searchTerm, onSearchChange, placeholder = "Search tasks..." }) {
+const SearchBar = forwardRef(({ searchTerm, onSearchChange, placeholder = "Search tasks..." }, ref) => {
   return (
     <div className="search-bar">
       <span className="search-icon">🔍</span>
       <input
+        ref={ref}
         type="text"
         className="search-input"
         placeholder={placeholder}
@@ -23,6 +24,8 @@ function SearchBar({ searchTerm, onSearchChange, placeholder = "Search tasks..."
       )}
     </div>
   );
-}
+});
+
+SearchBar.displayName = 'SearchBar';
 
 export default SearchBar;

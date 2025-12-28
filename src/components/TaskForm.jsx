@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import { useTask } from '../context/TaskContext';
 import './TaskForm.css';
 
-function TaskForm({ editTask, onEditComplete }) {
+const TaskForm = forwardRef(({ editTask, onEditComplete }, ref) => {
   const { addTask, updateTask } = useTask();
   const [title, setTitle] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -110,6 +110,7 @@ function TaskForm({ editTask, onEditComplete }) {
         <div className="form-group">
           <label>Title:</label>
           <input
+            ref={ref}
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -120,11 +121,39 @@ function TaskForm({ editTask, onEditComplete }) {
 
         <div className="form-group">
           <label>Deadline:</label>
-          <input
-            type="datetime-local"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-          />
+          <div className="deadline-input-group">
+            <input
+              type="datetime-local"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+            />
+            <div className="quick-date-presets">
+              <button type="button" onClick={() => {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(17, 0, 0, 0);
+                setDeadline(tomorrow.toISOString().slice(0, 16));
+              }}>
+                Tomorrow
+              </button>
+              <button type="button" onClick={() => {
+                const nextWeek = new Date();
+                nextWeek.setDate(nextWeek.getDate() + 7);
+                nextWeek.setHours(17, 0, 0, 0);
+                setDeadline(nextWeek.toISOString().slice(0, 16));
+              }}>
+                Next Week
+              </button>
+              <button type="button" onClick={() => {
+                const endOfMonth = new Date();
+                endOfMonth.setMonth(endOfMonth.getMonth() + 1, 0);
+                endOfMonth.setHours(17, 0, 0, 0);
+                setDeadline(endOfMonth.toISOString().slice(0, 16));
+              }}>
+                End of Month
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="form-group">
@@ -220,6 +249,8 @@ function TaskForm({ editTask, onEditComplete }) {
       </form>
     </div>
   );
-}
+});
+
+TaskForm.displayName = 'TaskForm';
 
 export default TaskForm;

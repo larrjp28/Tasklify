@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useTask } from '../context/TaskContext';
 import TaskCard from './TaskCard';
+import TaskCardSkeleton from './TaskCardSkeleton';
 import './Dashboard.css';
 
 function Dashboard() {
-  const { tasks, getTasksByStatus } = useTask();
+  const { tasks, getTasksByStatus, loading } = useTask();
   const [activeFilter, setActiveFilter] = useState('All');
 
   const filters = ['Importance', 'All', 'Finished', 'Ongoing', 'Missed'];
@@ -64,6 +65,18 @@ function Dashboard() {
   };
 
   const priorityStats = getTasksByPriority();
+
+  const getRecentlyCompleted = () => {
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    
+    return finishedTasks
+      .filter(task => task.finishedAt && new Date(task.finishedAt) >= oneDayAgo)
+      .sort((a, b) => new Date(b.finishedAt) - new Date(a.finishedAt))
+      .slice(0, 5);
+  };
+
+  const recentlyCompleted = getRecentlyCompleted();
 
   const getUpcomingReminders = () => {
     const now = new Date();
@@ -175,10 +188,44 @@ function Dashboard() {
         </div>
       </div>
 
+      {recentlyCompleted.length > 0 && (
+        <div className="recently-completed-section">
+          <h3 className="section-title">🎉 Recently Completed (Last 24h)</h3>
+          <div className="recently-completed-list">
+            {recentlyCompleted.map((task) => (
+              <div key={task.id} className="completed-item">
+                <div className="completed-icon">✅</div>
+                <div className="completed-info">
+                  <h4 className="completed-title">{task.title}</h4>
+                  <p className="completed-time">
+                    Completed {new Date(task.finishedAt).toLocaleString('en-US', { 
+                      month: 'short', 
+                      day: 'numeric', 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </p>
+                </div>
+                {task.priority && (
+                  <span className={`completed-priority priority-${task.priority}`}>
+                    {task.priority}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="filtered-tasks">
         <h3 className="section-title">{activeFilter} Tasks ({filteredTasks.length})</h3>
         <div className="tasks-grid">
-          {filteredTasks.length > 0 ? (
+          {loading ? (
+            // Show skeleton loaders while loading
+            Array.from({ length: 6 }).map((_, index) => (
+              <TaskCardSkeleton key={index} />
+            ))
+          ) : filteredTasks.length > 0 ? (
             filteredTasks.map((task) => (
               <TaskCard key={task.id} task={task} />
             ))

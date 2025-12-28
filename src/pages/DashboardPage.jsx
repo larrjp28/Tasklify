@@ -1,5 +1,6 @@
 import React from 'react';
 import Dashboard from '../components/Dashboard';
+import ProductivityCharts from '../components/ProductivityCharts';
 import './DashboardPage.css';
 
 function DashboardPage() {
@@ -10,6 +11,7 @@ function DashboardPage() {
         <p>Overview of your tasks and progress</p>
       </div>
       
+      <ProductivityCharts />
       <Dashboard />
     </div>
   );

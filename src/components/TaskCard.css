@@ -4,10 +4,22 @@
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 4px 4px 0 var(--purple-dark);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s;
   cursor: pointer;
   position: relative;
   border-left-width: 6px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .task-card.priority-high {
@@ -27,9 +39,47 @@
   box-shadow: 6px 6px 0 var(--purple-dark);
 }
 
+.task-card.pinned {
+  border: 4px solid #fbbf24;
+  box-shadow: 0 0 0 2px #fef3c7, 4px 4px 0 var(--purple-dark);
+  background: linear-gradient(135deg, #fef3c7 0%, var(--pink-card) 100%);
+}
+
+.task-card.pinned:hover {
+  box-shadow: 0 0 0 2px #fef3c7, 6px 6px 0 var(--purple-dark);
+}
+
+.pin-badge {
+  font-size: 1rem;
+  animation: pinPulse 2s ease-in-out infinite;
+}
+
+@keyframes pinPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
 .task-card.finished {
   opacity: 0.7;
   background: #e8f5e9;
+  animation: fadeIn 0.5s ease-out, completeWiggle 0.5s ease-out;
+}
+
+@keyframes completeWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-2deg); }
+  75% { transform: rotate(2deg); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 0.7;
+    transform: scale(1);
+  }
 }
 
 .task-card.missed {
@@ -170,14 +220,39 @@
   margin-bottom: 0.5rem;
 }
 
+.subtasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
 .subtasks-progress {
   font-size: 0.8rem;
   color: var(--purple-dark);
   font-weight: 600;
-  background: rgba(139, 123, 184, 0.1);
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  display: inline-block;
+}
+
+.subtasks-percentage {
+  font-size: 0.75rem;
+  color: var(--purple-light);
+  font-weight: 700;
+}
+
+.subtasks-progress-bar {
+  height: 6px;
+  background: rgba(139, 123, 184, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--purple-dark);
+}
+
+.subtasks-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple-light), var(--pink));
+  border-radius: 10px;
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 8px rgba(139, 123, 184, 0.5);
 }
 
 .task-details {

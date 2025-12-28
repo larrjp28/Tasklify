@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTask } from '../context/TaskContext';
 import TaskModal from './TaskModal';
 import ConfirmDialog from './ConfirmDialog';
+import { triggerConfetti } from '../utils/confetti';
+import { getTagColor } from '../utils/tagColors';
 import './TaskCard.css';
 
 function TaskCard({ task, onEdit }) {
-  const { deleteTask, markAsFinished, updateTask } = useTask();
+  const { deleteTask, markAsFinished, updateTask, duplicateTask, togglePin } = useTask();
   const [showMenu, setShowMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(false);
@@ -82,12 +84,21 @@ function TaskCard({ task, onEdit }) {
   };
 
   const handleMarkFinished = () => {
+    const cardElement = document.querySelector(`[data-task-id="${task.id}"]`);
+    if (cardElement) {
+      triggerConfetti(cardElement);
+    }
     markAsFinished(task.id);
     setShowMenu(false);
   };
 
   const handleChangeStatus = (newStatus) => {
     updateTask(task.id, { status: newStatus });
+    setShowMenu(false);
+  };
+
+  const handleDuplicate = () => {
+    duplicateTask(task.id);
     setShowMenu(false);
   };
 
@@ -103,9 +114,14 @@ function TaskCard({ task, onEdit }) {
         type="danger"
       />
       
-      <div className={`task-card ${task.status} priority-${task.priority || 'medium'}`} onClick={() => setShowModal(true)}>
+      <div className={`task-card ${task.status} priority-${task.priority || 'medium'} ${task.isPinned ? 'pinned' : ''}`} onClick={() => setShowModal(true)} data-task-id={task.id}>
       <div className="task-card-header">
         <div className="task-badges">
+          {task.isPinned && (
+            <span className="pin-badge" title="Pinned">
+              📌
+            </span>
+          )}
           <span 
             className="task-category" 
             style={{ backgroundColor: getPriorityColor(task.priority) }}
@@ -125,6 +141,9 @@ function TaskCard({ task, onEdit }) {
           </button>
           {showMenu && (
             <div className="task-menu-dropdown">
+              <button onClick={() => { togglePin(task.id); setShowMenu(false); }}>
+                {task.isPinned ? '📌 Unpin' : '📍 Pin to Top'}
+              </button>
               {task.status !== 'finished' && (
                 <button onClick={handleMarkFinished}>✓ Mark Finished</button>
               )}
@@ -137,6 +156,7 @@ function TaskCard({ task, onEdit }) {
               <button onClick={() => { setShowMenu(false); onEdit && onEdit(task); }}>
                 ✎ Edit
               </button>
+              <button onClick={handleDuplicate}>📋 Duplicate</button>
               <button onClick={handleDelete} className="delete-btn">🗑 Delete</button>
             </div>
           )}
@@ -146,15 +166,38 @@ function TaskCard({ task, onEdit }) {
       {task.tags && task.tags.length > 0 && (
         <div className="task-tags">
           {task.tags.map((tag, index) => (
-            <span key={index} className="task-tag">{tag}</span>
+            <span 
+              key={index} 
+              className="task-tag"
+              style={{ 
+                backgroundColor: getTagColor(tag),
+                color: 'white',
+                borderColor: getTagColor(tag)
+              }}
+            >
+              {tag}
+            </span>
           ))}
         </div>
       )}
       {task.subtasks && task.subtasks.length > 0 && (
         <div className="task-subtasks-preview">
-          <span className="subtasks-progress">
-            {task.subtasks.filter(st => st.completed).length}/{task.subtasks.length} subtasks completed
-          </span>
+          <div className="subtasks-header">
+            <span className="subtasks-progress">
+              {task.subtasks.filter(st => st.completed).length}/{task.subtasks.length} subtasks
+            </span>
+            <span className="subtasks-percentage">
+              {Math.round((task.subtasks.filter(st => st.completed).length / task.subtasks.length) * 100)}%
+            </span>
+          </div>
+          <div className="subtasks-progress-bar">
+            <div 
+              className="subtasks-progress-fill"
+              style={{ 
+                width: `${(task.subtasks.filter(st => st.completed).length / task.subtasks.length) * 100}%` 
+              }}
+            />
+          </div>
         </div>
       )}
       {task.details && <p className="task-details">{task.details}</p>}

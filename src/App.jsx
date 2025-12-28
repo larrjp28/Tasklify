@@ -12,6 +12,7 @@ import FinishedPage from './pages/FinishedPage'
 import MissedPage from './pages/MissedPage'
 import CalendarPage from './pages/CalendarPage'
 import ProfilePage from './pages/ProfilePage'
+import FocusMode from './pages/FocusMode'
 import './App.css'
 
 // Protected Route Component
@@ -45,6 +46,13 @@ function App() {
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="profile" element={<ProfilePage />} />
             </Route>
+            
+            {/* Focus Mode (full screen, outside Layout) */}
+            <Route path="/focus" element={
+              <ProtectedRoute>
+                <FocusMode />
+              </ProtectedRoute>
+            } />
           </Routes>
         </BrowserRouter>
       </TaskProvider>

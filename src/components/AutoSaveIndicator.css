@@ -1,0 +1,87 @@
+.auto-save-indicator {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: white;
+  border: 3px solid var(--purple-dark);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--purple-dark);
+  box-shadow: 4px 4px 0 var(--purple-dark);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: slideInDown 0.3s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auto-save-indicator.saving {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
+.auto-save-indicator.saved {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.save-spinner {
+  animation: spin 1s linear infinite;
+  font-size: 1.2rem;
+  display: inline-block;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.save-check {
+  font-size: 1.2rem;
+  animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Dark mode */
+body.dark-mode .auto-save-indicator {
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+body.dark-mode .auto-save-indicator.saving {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
+body.dark-mode .auto-save-indicator.saved {
+  border-color: #10b981;
+  color: #10b981;
+}

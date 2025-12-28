@@ -15,7 +15,9 @@ export const useTask = () => {
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { showSuccess, showError } = useToast();
+  const [deletedTasks, setDeletedTasks] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const { showSuccess, showError, showInfo } = useToast();
 
   // Load tasks from localforage on mount
   useEffect(() => {
@@ -37,9 +39,15 @@ export const TaskProvider = ({ children }) => {
   // Save tasks to localforage whenever they change
   useEffect(() => {
     if (!loading) {
-      localforage.setItem('tasks', tasks).catch((error) => {
-        console.error('Error saving tasks:', error);
-      });
+      setIsSaving(true);
+      localforage.setItem('tasks', tasks)
+        .then(() => {
+          setTimeout(() => setIsSaving(false), 300); // Brief delay to show indicator
+        })
+        .catch((error) => {
+          console.error('Error saving tasks:', error);
+          setIsSaving(false);
+        });
     }
   }, [tasks, loading]);
 
@@ -52,6 +60,7 @@ export const TaskProvider = ({ children }) => {
       tags: task.tags || [],
       subtasks: task.subtasks || [],
       recurrence: task.recurrence || null,
+      isPinned: task.isPinned || false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -76,8 +85,22 @@ export const TaskProvider = ({ children }) => {
 
   // Delete a task
   const deleteTask = (id) => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
-    showSuccess('Task deleted successfully!');
+    const taskToDelete = tasks.find(t => t.id === id);
+    if (taskToDelete) {
+      setDeletedTasks(prev => [...prev.slice(-9), { task: taskToDelete, timestamp: Date.now() }]);
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+      showSuccess('Task deleted! Click undo to restore.');
+    }
+  };
+
+  // Undo last delete
+  const undoDelete = () => {
+    if (deletedTasks.length > 0) {
+      const lastDeleted = deletedTasks[deletedTasks.length - 1];
+      setTasks(prev => [lastDeleted.task, ...prev]);
+      setDeletedTasks(prev => prev.slice(0, -1));
+      showInfo('Task restored!');
+    }
   };
 
   // Mark task as finished
@@ -122,6 +145,38 @@ export const TaskProvider = ({ children }) => {
     }
     
     return next.toISOString().slice(0, 16);
+  };
+
+  // Duplicate a task
+  const duplicateTask = (id) => {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      const duplicatedTask = {
+        title: `${task.title} (Copy)`,
+        details: task.details,
+        priority: task.priority,
+        tags: task.tags ? [...task.tags] : [],
+        deadline: task.deadline,
+        recurrence: task.recurrence,
+        subtasks: task.subtasks ? task.subtasks.map(st => ({ ...st, id: Date.now().toString() + Math.random() })) : [],
+      };
+      addTask(duplicatedTask);
+    }
+  };
+
+  // Toggle task pin status
+  const togglePin = (id) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id
+          ? { ...task, isPinned: !task.isPinned, updatedAt: new Date().toISOString() }
+          : task
+      )
+    );
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      showInfo(task.isPinned ? 'Task unpinned' : 'Task pinned to top');
+    }
   };
 
   // Mark task as missed
@@ -211,13 +266,18 @@ export const TaskProvider = ({ children }) => {
   const value = {
     tasks,
     loading,
+    isSaving,
     addTask,
     updateTask,
     deleteTask,
+    undoDelete,
     markAsFinished,
     markAsMissed,
+    duplicateTask,
+    togglePin,
     getTasksByStatus,
     getUpcomingTasks,
+    canUndo: deletedTasks.length > 0,
   };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;

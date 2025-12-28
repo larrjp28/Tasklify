@@ -52,6 +52,43 @@
   min-height: 80px;
 }
 
+.deadline-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quick-date-presets {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.quick-date-presets button {
+  padding: 0.4rem 0.8rem;
+  background: var(--pink-card);
+  border: 2px solid var(--purple-dark);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--purple-dark);
+  box-shadow: 2px 2px 0 var(--purple-dark);
+  transition: all 0.2s;
+}
+
+.quick-date-presets button:hover {
+  background: var(--pink);
+  color: white;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--purple-dark);
+}
+
+.quick-date-presets button:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--purple-dark);
+}
+
 .submit-btn {
   width: 100%;
   padding: 0.75rem;
