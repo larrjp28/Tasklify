@@ -1,8 +1,8 @@
-/* 8-bit style toggle button */
+/* 8-bit style toggle button - responsive positioning */
 .sidebar-toggle {
   position: fixed;
-  top: 1rem;
-  left: 1rem;
+  top: clamp(1rem, 4vw, 2rem);
+  left: clamp(1.25rem, 5vw, 2.75rem);
   z-index: 1001;
   background: white;
   border: 4px solid #1a1a2e;
@@ -18,6 +18,11 @@
   padding: 0;
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Reserved spacing when sidebar is open */
+.sidebar.open ~ .sidebar-toggle {
+  left: calc(260px + 1.5rem);
 }
 
 .sidebar-toggle.hidden {
@@ -313,12 +318,22 @@
     display: none !important;
     pointer-events: none !important;
   }
+  
+  /* Adjust toggle position when sidebar is open on desktop */
+  .sidebar.open ~ .sidebar-toggle {
+    left: calc(260px + 1rem);
+  }
 }
 
 /* Mobile: Overlay visible when sidebar is open */
 @media (max-width: 899px) {
   .sidebar-overlay.visible {
     display: block;
+  }
+  
+  /* On mobile, keep toggle in original position but hide when sidebar is open */
+  .sidebar.open ~ .sidebar-toggle {
+    left: clamp(1.25rem, 5vw, 2.75rem);
   }
 }
 

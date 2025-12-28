@@ -1,5 +1,6 @@
 .page {
   padding: 1rem;
+  padding-left: 4.5rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -519,6 +520,7 @@
 @media (min-width: 900px) {
   .page {
     padding: 1.5rem;
+    padding-left: 1.5rem;
   }
   
   .tasks-grid {

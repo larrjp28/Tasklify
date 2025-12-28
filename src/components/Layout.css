@@ -7,13 +7,18 @@
 .layout-main {
   flex: 1;
   min-height: 100vh;
-  padding-top: 1rem;
+  padding: 1rem 1rem 1rem clamp(3.75rem, 10vw, 6rem);
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
 }
 
 /* Desktop: Dynamically adjust based on sidebar state */
 @media (min-width: 900px) {
+  .layout-main {
+    padding: 1.5rem;
+    padding-left: 0;
+  }
+  
   .layout-main.sidebar-open {
     margin-left: 260px;
     width: calc(100% - 260px);
