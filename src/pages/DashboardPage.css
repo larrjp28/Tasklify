@@ -1,0 +1,35 @@
+.page {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid var(--purple-dark);
+}
+
+.page-header h1 {
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  text-shadow: 3px 3px 0 var(--purple-dark);
+}
+
+.page-header p {
+  color: white;
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+
+@media (min-width: 900px) {
+  .page {
+    padding: 1.5rem;
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
+  }
+}

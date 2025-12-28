@@ -1,0 +1,64 @@
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import './Sidebar.css';
+
+function Sidebar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+
+  const menuItems = [
+    { path: '/dashboard', icon: '📊', label: 'Dashboard' },
+    { path: '/tasks', icon: '📝', label: 'My Tasks' },
+    { path: '/upcoming', icon: '📅', label: 'Upcoming' },
+    { path: '/finished', icon: '✅', label: 'Finished' },
+    { path: '/missed', icon: '❌', label: 'Missed' },
+    { path: '/calendar', icon: '📆', label: 'Calendar' },
+    { path: '/profile', icon: '👤', label: 'Profile' },
+  ];
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    window.location.href = '/';
+  };
+
+  return (
+    <>
+      {/* Hamburger Button */}
+      <button className="hamburger" onClick={toggleSidebar}>
+        {isOpen ? '✕' : '☰'}
+      </button>
+
+      {/* Overlay */}
+      {isOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
+
+      {/* Sidebar */}
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <h2>Tasklify</h2>
+        </div>
+
+        <nav className="sidebar-nav">
+          {menuItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="sidebar-icon">{item.icon}</span>
+              <span className="sidebar-label">{item.label}</span>
+            </NavLink>
+          ))}
+        </nav>
+
+        <button className="logout-btn" onClick={handleLogout}>
+          <span className="sidebar-icon">🚪</span>
+          <span className="sidebar-label">Logout</span>
+        </button>
+      </aside>
+    </>
+  );
+}
+
+export default Sidebar;

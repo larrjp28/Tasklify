@@ -1,0 +1,16 @@
+.layout {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.layout-main {
+  min-height: 100vh;
+  padding-top: 1rem;
+}
+
+/* Desktop: Add left margin for sidebar */
+@media (min-width: 900px) {
+  .layout-main {
+    margin-left: 260px;
+  }
+}
