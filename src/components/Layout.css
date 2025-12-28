@@ -1,16 +1,33 @@
 .layout {
   min-height: 100vh;
   background: var(--background);
+  display: flex;
 }
 
 .layout-main {
+  flex: 1;
   min-height: 100vh;
   padding-top: 1rem;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
 }
 
-/* Desktop: Add left margin for sidebar */
+/* Desktop: Dynamically adjust based on sidebar state */
 @media (min-width: 900px) {
-  .layout-main {
+  .layout-main.sidebar-open {
     margin-left: 260px;
+    width: calc(100% - 260px);
+  }
+  
+  .layout-main.sidebar-closed {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  /* Center content when sidebar is closed */
+  .layout-main.sidebar-closed > * {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
