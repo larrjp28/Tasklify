@@ -3,6 +3,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { useTaskStore } from "../stores/taskStore";
 import Sidebar from "./Sidebar";
+import { Menu } from "lucide-react";
 
 export default function Layout() {
   const { isAuthenticated } = useAuthStore();
@@ -30,10 +31,10 @@ export default function Layout() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMobileOpen(true)}
-          className="md:hidden mb-4 p-2 rounded-lg bg-tasklify-purple text-white hover:bg-tasklify-purple-dark transition-colors"
+          className="md:hidden mb-4 p-2 rounded-lg bg-tasklify-purple text-white hover:bg-tasklify-purple-dark transition-all duration-300 hover:scale-105"
           aria-label="Open menu"
         >
-          ☰
+          <Menu size={24} />
         </button>
         <Outlet />
       </main>

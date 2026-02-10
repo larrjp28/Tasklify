@@ -3,6 +3,7 @@ import { useFocusTrap } from "../hooks/useFocusTrap";
 import { useTaskStore, useToastStore } from "../stores/taskStore";
 import { Task, TaskPriority, TaskStatus } from "../types";
 import { db } from "../lib/database";
+import { Pencil, X, Calendar, AlignLeft, FolderOpen, Zap, Clock, Circle, CheckCircle2, XCircle } from "lucide-react";
 
 interface EditTaskFormProps {
   task: Task;
@@ -15,10 +16,10 @@ const priorityOptions: { value: TaskPriority; label: string; color: string }[] =
   { value: "urgent", label: "Urgent", color: "bg-red-100 text-red-700" },
 ];
 
-const statusOptions: { value: TaskStatus; label: string }[] = [
-  { value: "ongoing", label: "⏳ Ongoing" },
-  { value: "finished", label: "✅ Finished" },
-  { value: "missed", label: "❌ Missed" },
+const statusOptions: { value: TaskStatus; label: string; icon: typeof Clock }[] = [
+  { value: "ongoing", label: "Ongoing", icon: Clock },
+  { value: "finished", label: "Finished", icon: CheckCircle2 },
+  { value: "missed", label: "Missed", icon: XCircle },
 ];
 
 export default function EditTaskForm({ task }: EditTaskFormProps) {
@@ -74,12 +75,16 @@ export default function EditTaskForm({ task }: EditTaskFormProps) {
       <div ref={trapRef} className="bg-white rounded-2xl border-4 border-tasklify-purple shadow-2xl w-full max-w-md overflow-hidden animate-in max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-tasklify-purple px-6 py-4 flex items-center justify-between sticky top-0">
-          <h2 className="text-white font-bold text-lg">✏️ Edit Task</h2>
+          <h2 className="text-white font-bold text-lg flex items-center gap-2">
+            <Pencil size={20} strokeWidth={2.5} />
+            <span>Edit Task</span>
+          </h2>
           <button
             onClick={() => setEditingTask(null)}
-            className="text-white/70 hover:text-tasklify-gold text-2xl font-bold leading-none transition-colors"
+            className="text-white/70 hover:text-tasklify-gold transition-all duration-300 hover:scale-110"
+            aria-label="Close"
           >
-            ×
+            <X size={24} />
           </button>
         </div>
 
@@ -195,17 +200,26 @@ export default function EditTaskForm({ task }: EditTaskFormProps) {
             <label className="block text-tasklify-purple-dark font-bold text-sm mb-1">
               Status:
             </label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as TaskStatus)}
-              className="w-full px-4 py-2.5 rounded-lg border-2 border-tasklify-purple-light bg-tasklify-pink-card/20 focus:border-tasklify-purple focus:outline-none text-sm transition-colors"
-            >
-              {statusOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              {statusOptions.map((opt) => {
+                const Icon = opt.icon;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setStatus(opt.value)}
+                    className={`flex-1 px-3 py-2 rounded-lg text-xs font-bold border-2 transition-all duration-300 flex items-center justify-center gap-1.5 ${
+                      status === opt.value
+                        ? "bg-tasklify-purple text-white border-tasklify-purple scale-105 shadow-md"
+                        : "bg-gray-50 text-gray-400 border-gray-200 hover:bg-gray-100 hover:scale-105"
+                    }`}
+                  >
+                    <Icon size={14} />
+                    <span>{opt.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Deadline */}

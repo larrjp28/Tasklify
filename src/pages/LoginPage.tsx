@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import { User } from "lucide-react";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -40,19 +41,22 @@ export default function LoginPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          <div>
+          <div className="relative">
             <label className="block text-tasklify-purple-dark font-bold text-sm mb-1.5">
               Username:
             </label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
-              className="w-full px-4 py-3 rounded-lg border-2 border-tasklify-purple-light bg-tasklify-pink-card/20 focus:border-tasklify-purple focus:outline-none text-sm transition-colors"
-              required
-              autoFocus
-            />
+            <div className="relative">
+              <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-tasklify-purple" />
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
+                className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-tasklify-purple-light bg-tasklify-pink-card/20 focus:border-tasklify-purple focus:outline-none text-sm transition-all duration-300"
+                required
+                autoFocus
+              />
+            </div>
           </div>
 
           <p className="text-tasklify-purple/60 text-xs text-center -mt-1">
@@ -61,7 +65,7 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-lg bg-tasklify-purple font-bold text-white text-lg hover:bg-tasklify-purple-dark transition-colors duration-200 shadow-md mt-2"
+            className="w-full py-3 rounded-lg bg-tasklify-purple font-bold text-white text-lg hover:bg-tasklify-purple-dark transition-all duration-300 shadow-md mt-2 hover:shadow-lg hover:scale-[1.02]"
           >
             Login
           </button>

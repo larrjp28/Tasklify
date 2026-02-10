@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import { LayoutDashboard, ListChecks, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 
 const navItems = [
-  { label: "Dashboard", path: "/dashboard", icon: "📊" },
-  { label: "Tasks", path: "/tasks", icon: "📋" },
+  { label: "Dashboard", path: "/dashboard", Icon: LayoutDashboard },
+  { label: "Tasks", path: "/tasks", Icon: ListChecks },
 ];
 
 interface SidebarProps {
@@ -56,10 +57,10 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="w-8 h-8 rounded-lg bg-tasklify-purple-dark/60 text-white flex items-center justify-center hover:bg-tasklify-purple-dark transition-colors text-sm mx-auto"
+          className="w-8 h-8 rounded-lg bg-tasklify-purple-dark/60 text-white flex items-center justify-center hover:bg-tasklify-purple-dark transition-all duration-300 text-sm mx-auto"
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? "▶" : "◀"}
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>
 
@@ -83,6 +84,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           const isActive = item.path === "/tasks" 
             ? location.pathname.startsWith("/tasks")
             : location.pathname === item.path;
+          const Icon = item.Icon;
 
           return (
             <button
@@ -90,7 +92,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               onClick={() => handleNav(item.path)}
               aria-current={isActive ? "page" : undefined}
               title={collapsed ? item.label : undefined}
-              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center ${
+              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center ${
                 collapsed ? "justify-center" : "gap-2.5"
               }
                 ${
@@ -99,7 +101,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                     : "bg-tasklify-purple-dark text-white hover:bg-tasklify-purple-mid hover:scale-[1.01]"
                 }`}
             >
-              <span className="text-base">{item.icon}</span>
+              <Icon size={18} strokeWidth={2} />
               {!collapsed && item.label}
             </button>
           );
@@ -113,11 +115,11 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       <button
         onClick={handleLogout}
         title={collapsed ? "Logout" : undefined}
-        className={`w-full px-3 py-2.5 rounded-lg text-sm font-semibold bg-tasklify-pink-dark text-white hover:bg-tasklify-pink transition-all duration-200 flex items-center ${
+        className={`w-full px-3 py-2.5 rounded-lg text-sm font-semibold bg-tasklify-pink-dark text-white hover:bg-tasklify-pink transition-all duration-300 flex items-center ${
           collapsed ? "justify-center" : "gap-2"
         }`}
       >
-        <span>🚪</span>
+        <LogOut size={18} strokeWidth={2} />
         {!collapsed && "Logout"}
       </button>
     </aside>

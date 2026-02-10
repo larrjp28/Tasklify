@@ -4,6 +4,7 @@ import { useTaskStore, useTaskStats } from "../stores/taskStore";
 import ProgressBar from "../components/ProgressBar";
 import { format, isAfter, isBefore, addDays, startOfDay } from "date-fns";
 import { parseLocalDate } from "../lib/database";
+import { CheckCircle2, XCircle, Bell, Calendar } from "lucide-react";
 
 export default function DashboardPage() {
   const { tasks, loadTasks } = useTaskStore();
@@ -38,10 +39,11 @@ export default function DashboardPage() {
         {/* Finished Tasks */}
         <div
           onClick={() => navigate("/tasks")}
-          className="bg-white rounded-2xl border-[3px] border-tasklify-purple p-5 shadow-lg cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all"
+          className="bg-white rounded-2xl border-[3px] border-tasklify-purple p-5 shadow-lg cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-300"
         >
           <h2 className="font-bold text-tasklify-purple-dark text-lg mb-3 border-b-2 border-tasklify-purple-light pb-2 flex items-center gap-2">
-            <span className="text-tasklify-green">✅</span> Finished Tasks
+            <CheckCircle2 size={20} className="text-tasklify-green" strokeWidth={2.5} />
+            <span>Finished Tasks</span>
             <span className="ml-auto text-sm bg-tasklify-green/20 text-tasklify-green px-2 py-0.5 rounded-full">{finished}</span>
           </h2>
           <div className="space-y-2 max-h-52 overflow-auto pr-1">
@@ -75,10 +77,11 @@ export default function DashboardPage() {
         {/* Missed Tasks */}
         <div
           onClick={() => navigate("/tasks")}
-          className="bg-white rounded-2xl border-[3px] border-tasklify-purple p-5 shadow-lg cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all"
+          className="bg-white rounded-2xl border-[3px] border-tasklify-purple p-5 shadow-lg cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-300"
         >
           <h2 className="font-bold text-tasklify-purple-dark text-lg mb-3 border-b-2 border-tasklify-purple-light pb-2 flex items-center gap-2">
-            <span className="text-tasklify-pink-dark">❌</span> Missed Tasks
+            <XCircle size={20} className="text-tasklify-pink-dark" strokeWidth={2.5} />
+            <span>Missed Tasks</span>
             <span className="ml-auto text-sm bg-tasklify-pink-dark/15 text-tasklify-pink-dark px-2 py-0.5 rounded-full">{missed}</span>
           </h2>
           <div className="space-y-2 max-h-52 overflow-auto pr-1">
@@ -112,10 +115,11 @@ export default function DashboardPage() {
         {/* Reminders */}
         <div
           onClick={() => navigate("/tasks")}
-          className="bg-white rounded-2xl border-[3px] border-tasklify-purple p-5 shadow-lg cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all"
+          className="bg-white rounded-2xl border-[3px] border-tasklify-purple p-5 shadow-lg cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-300"
         >
           <h2 className="font-bold text-tasklify-purple-dark text-lg mb-3 border-b-2 border-tasklify-purple-light pb-2 flex items-center gap-2">
-            <span className="text-tasklify-gold">🔔</span> Reminders
+            <Bell size={20} className="text-tasklify-gold" strokeWidth={2.5} />
+            <span>Reminders</span>
             <span className="ml-auto text-sm bg-tasklify-gold/20 text-tasklify-gold px-2 py-0.5 rounded-full">{upcomingTasks.length}</span>
           </h2>
           <div className="space-y-2 max-h-52 overflow-auto pr-1">
@@ -132,8 +136,9 @@ export default function DashboardPage() {
                   <p className="text-sm font-semibold text-tasklify-purple-dark">
                     {task.title}
                   </p>
-                  <p className="text-xs text-tasklify-pink-dark font-medium mt-0.5">
-                    📅 Due: {format(parseLocalDate(task.deadline), "MMM d, yyyy")}
+                  <p className="text-xs text-tasklify-pink-dark font-medium mt-0.5 flex items-center gap-1">
+                    <Calendar size={12} />
+                    Due: {format(parseLocalDate(task.deadline), "MMM d, yyyy")}
                   </p>
                 </div>
               ))

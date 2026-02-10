@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useFocusTrap } from "../hooks/useFocusTrap";
+import { AlertTriangle } from "lucide-react";
 
 interface ConfirmDialogProps {
   title: string;
@@ -61,13 +62,13 @@ export default function ConfirmDialog({
             <button
               ref={cancelRef}
               onClick={onCancel}
-              className="px-5 py-2.5 rounded-lg border-2 border-tasklify-purple-light text-tasklify-purple-dark font-semibold text-sm hover:bg-tasklify-purple-light/20 transition-colors"
+              className="px-6 py-2.5 rounded-lg border-2 border-tasklify-purple-light text-tasklify-purple-dark font-semibold hover:bg-tasklify-pink-card transition-all duration-300 hover:scale-105"
             >
               {cancelLabel}
             </button>
             <button
               onClick={onConfirm}
-              className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-colors shadow-md ${confirmColor}`}
+              className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 ${confirmColor}`}
             >
               {confirmLabel}
             </button>

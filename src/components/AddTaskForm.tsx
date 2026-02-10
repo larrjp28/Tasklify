@@ -4,6 +4,7 @@ import { useTaskStore, useToastStore } from "../stores/taskStore";
 import { TaskPriority } from "../types";
 import { format } from "date-fns";
 import { db } from "../lib/database";
+import { Plus, X, Calendar, AlignLeft, FolderOpen, Zap } from "lucide-react";
 
 const priorityOptions: { value: TaskPriority; label: string; color: string }[] = [
   { value: "low", label: "Low", color: "bg-blue-100 text-blue-700" },
@@ -70,12 +71,16 @@ export default function AddTaskForm() {
       <div ref={trapRef} className="bg-white rounded-2xl border-4 border-tasklify-purple shadow-2xl w-full max-w-md overflow-hidden animate-in max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-tasklify-pink-card px-6 py-4 flex items-center justify-between sticky top-0">
-          <h2 className="text-tasklify-purple-dark font-bold text-lg">📝 Add New Task</h2>
+          <h2 className="text-tasklify-purple-dark font-bold text-lg flex items-center gap-2">
+            <Plus size={20} strokeWidth={2.5} />
+            <span>Add New Task</span>
+          </h2>
           <button
             onClick={() => setShowAddForm(false)}
-            className="text-tasklify-purple-dark/70 hover:text-tasklify-purple text-2xl font-bold leading-none transition-colors"
+            className="text-tasklify-purple-dark/70 hover:text-tasklify-purple transition-all duration-300 hover:scale-110"
+            aria-label="Close"
           >
-            ×
+            <X size={24} />
           </button>
         </div>
 
