@@ -2,6 +2,7 @@ import { Task, User } from "../types";
 
 const TASKS_KEY_PREFIX = "tasklify_tasks";
 const USER_KEY = "tasklify_user";
+const PROFILES_KEY = "tasklify_profiles";
 
 /** Get the current logged-in username for namespacing tasks per user */
 const getCurrentUsername = (): string | null => {
@@ -137,10 +138,55 @@ export const db = {
 
   saveUser: (user: User): void => {
     localStorage.setItem(USER_KEY, JSON.stringify(user));
+    // Also persist to profiles so PIN/displayName survives logout
+    db.saveUserProfile(user);
   },
 
   clearUser: (): void => {
     localStorage.removeItem(USER_KEY);
+  },
+
+  /** Get all user profiles (for PIN lookup etc) */
+  getUserProfiles: (): User[] => {
+    try {
+      const data = localStorage.getItem(PROFILES_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  },
+
+  /** Get a stored user profile by username */
+  getUserByUsername: (username: string): User | null => {
+    const profiles = db.getUserProfiles();
+    return profiles.find((p) => p.username.toLowerCase() === username.toLowerCase()) || null;
+  },
+
+  /** Save/update a user profile (persists settings across logouts) */
+  saveUserProfile: (user: User): void => {
+    const profiles = db.getUserProfiles();
+    const idx = profiles.findIndex((p) => p.username.toLowerCase() === user.username.toLowerCase());
+    if (idx >= 0) {
+      profiles[idx] = user;
+    } else {
+      profiles.push(user);
+    }
+    localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+  },
+
+  /** Check if we can add a new account (max 5) */
+  canAddAccount: (): boolean => {
+    return db.getUserProfiles().length < 5;
+  },
+
+  /** Delete a user profile and all their tasks */
+  deleteUserProfile: (username: string): void => {
+    const profiles = db.getUserProfiles().filter(
+      (p) => p.username.toLowerCase() !== username.toLowerCase()
+    );
+    localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+    // Also remove their tasks
+    localStorage.removeItem(`${TASKS_KEY_PREFIX}_${username}`);
   },
 };
 

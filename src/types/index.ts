@@ -17,6 +17,8 @@ export interface Task {
 
 export interface User {
   username: string;
+  displayName?: string;
+  pin?: string; // 4-digit PIN (optional)
 }
 
 export type FilterType = "all" | "finished" | "ongoing" | "missed";

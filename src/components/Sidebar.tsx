@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
-import { LayoutDashboard, ListChecks, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, ListChecks, CalendarDays, Settings, LogOut, Menu, X, ArrowLeftRight } from "lucide-react";
+import Tooltip from "./Tooltip";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", Icon: LayoutDashboard },
   { label: "Tasks", path: "/tasks", Icon: ListChecks },
+  { label: "Calendar", path: "/calendar", Icon: CalendarDays },
+  { label: "Settings", path: "/settings", Icon: Settings },
 ];
 
 interface SidebarProps {
@@ -18,6 +21,22 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const location = useLocation();
   const { user, logout } = useAuthStore();
   const [collapsed, setCollapsed] = useState(false);
+  const [isPersistent, setIsPersistent] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to close (only when not persistent and not mobile)
+  useEffect(() => {
+    if (collapsed || isPersistent || mobileOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+        setCollapsed(true);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [collapsed, isPersistent, mobileOpen]);
 
   const handleLogout = () => {
     logout();
@@ -40,8 +59,16 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         />
       )}
       <aside
+        ref={sidebarRef}
+        onClick={() => {
+          // Expand when clicking anywhere on collapsed sidebar
+          if (collapsed) {
+            setCollapsed(false);
+            setIsPersistent(false); // Not persistent when clicking anywhere
+          }
+        }}
         className={`${
-          collapsed ? "w-16" : "w-60"
+          collapsed ? "w-16 cursor-pointer" : "w-60"
         } min-h-screen bg-tasklify-purple flex flex-col p-3 gap-2 shadow-xl border-r-2 border-tasklify-border-dark transition-all duration-300 ${
           mobileOpen
             ? "fixed inset-y-0 left-0 z-40 md:relative"
@@ -55,27 +82,37 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             tasklify
           </h1>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="w-8 h-8 rounded-lg bg-tasklify-purple-dark/60 text-white flex items-center justify-center hover:bg-tasklify-purple-dark transition-all duration-300 text-sm mx-auto"
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-        </button>
+        <Tooltip text={collapsed ? "Open menu" : "Close menu"} position={collapsed ? "right" : "bottom"}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const willOpen = collapsed;
+              setCollapsed(!collapsed);
+              setIsPersistent(willOpen);
+            }}
+            className="w-8 h-8 rounded-lg bg-tasklify-purple-dark/60 text-white flex items-center justify-center hover:bg-tasklify-purple-dark transition-all duration-300 text-sm mx-auto"
+          >
+            {collapsed ? <Menu size={18} /> : <X size={16} />}
+          </button>
+        </Tooltip>
       </div>
 
       {/* User greeting */}
       {!collapsed ? (
         <div className="mb-3 px-3 py-3 bg-tasklify-purple-dark rounded-xl">
-          <p className="text-tasklify-pink-card text-xs font-medium">Username:</p>
+          <p className="text-tasklify-pink-card text-xs font-medium">
+            {user?.displayName ? "Welcome back," : "Username:"}
+          </p>
           <p className="text-white font-bold text-lg truncate">
-            {user?.username || "Guest"}
+            {user?.displayName || user?.username || "Guest"}
           </p>
         </div>
       ) : (
-        <div className="mb-3 w-10 h-10 mx-auto bg-tasklify-purple-dark rounded-full flex items-center justify-center text-white font-bold text-sm" title={user?.username || "Guest"}>
-          {(user?.username || "G")[0].toUpperCase()}
-        </div>
+        <Tooltip text={user?.displayName || user?.username || "Guest"} position="right">
+          <div className="mb-3 w-10 h-10 mx-auto bg-tasklify-purple-dark rounded-full flex items-center justify-center text-white font-bold text-sm cursor-default">
+            {(user?.displayName || user?.username || "G")[0].toUpperCase()}
+          </div>
+        </Tooltip>
       )}
 
       {/* Navigation */}
@@ -86,12 +123,14 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             : location.pathname === item.path;
           const Icon = item.Icon;
 
-          return (
+          const btn = (
             <button
               key={item.path}
-              onClick={() => handleNav(item.path)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNav(item.path);
+              }}
               aria-current={isActive ? "page" : undefined}
-              title={collapsed ? item.label : undefined}
               className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center ${
                 collapsed ? "justify-center" : "gap-2.5"
               }
@@ -105,23 +144,71 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               {!collapsed && item.label}
             </button>
           );
+
+          return collapsed ? (
+            <Tooltip key={item.path} text={item.label} position="right">
+              {btn}
+            </Tooltip>
+          ) : (
+            <div key={item.path}>{btn}</div>
+          );
         })}
       </nav>
 
       {/* Spacer */}
       <div className="flex-1" />
 
+      {/* Switch Account */}
+      {collapsed ? (
+        <Tooltip text="Switch Account" position="right">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLogout();
+            }}
+            className="w-full px-3 py-2.5 rounded-lg text-sm font-semibold bg-tasklify-purple-dark/60 text-white hover:bg-tasklify-purple-dark transition-all duration-300 flex items-center justify-center mb-1.5"
+          >
+            <ArrowLeftRight size={18} strokeWidth={2} />
+          </button>
+        </Tooltip>
+      ) : (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleLogout();
+          }}
+          className="w-full px-3 py-2.5 rounded-lg text-sm font-semibold bg-tasklify-purple-dark/60 text-white hover:bg-tasklify-purple-dark transition-all duration-300 flex items-center gap-2 mb-1.5"
+        >
+          <ArrowLeftRight size={18} strokeWidth={2} />
+          Switch Account
+        </button>
+      )}
+
       {/* Logout */}
-      <button
-        onClick={handleLogout}
-        title={collapsed ? "Logout" : undefined}
-        className={`w-full px-3 py-2.5 rounded-lg text-sm font-semibold bg-tasklify-pink-dark text-white hover:bg-tasklify-pink transition-all duration-300 flex items-center ${
-          collapsed ? "justify-center" : "gap-2"
-        }`}
-      >
-        <LogOut size={18} strokeWidth={2} />
-        {!collapsed && "Logout"}
-      </button>
+      {collapsed ? (
+        <Tooltip text="Logout" position="right">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLogout();
+            }}
+            className="w-full px-3 py-2.5 rounded-lg text-sm font-semibold bg-tasklify-pink-dark text-white hover:bg-tasklify-pink transition-all duration-300 flex items-center justify-center"
+          >
+            <LogOut size={18} strokeWidth={2} />
+          </button>
+        </Tooltip>
+      ) : (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleLogout();
+          }}
+          className="w-full px-3 py-2.5 rounded-lg text-sm font-semibold bg-tasklify-pink-dark text-white hover:bg-tasklify-pink transition-all duration-300 flex items-center gap-2"
+        >
+          <LogOut size={18} strokeWidth={2} />
+          Logout
+        </button>
+      )}
     </aside>
     </>
   );
